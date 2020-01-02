@@ -32,16 +32,41 @@ public class Resp<T> {
 
     public static<T> Resp<T> ok(T data){
         Resp<T> resp = new Resp<T>(data);
+
         resp.setCode(0);//操作成功
         resp.setMsg("success");
         return resp;
     }
 
-    public static<T> Resp<T> fail(T data){
+    public static<T> Resp<T> fail(String msg){
         Resp<T> resp = new Resp<T>();
         resp.setCode(1);//操作失败
-        resp.setMsg(data);
+        resp.setMsg(msg);
         return resp;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 
     public Resp<T> msg(String msg){
