@@ -9,6 +9,7 @@ import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,22 @@ import com.atguigu.gmall.pms.service.AttrService;
 public class AttrController {
     @Autowired
     private AttrService attrService;
+
+    /**
+     *
+     * @param queryCondition
+     * @param cid
+     * @param type
+     * @return
+     */
+    @GetMapping
+    public Resp<PageVo> queryAttrByCidOrTypePage(QueryCondition queryCondition,
+                                                 @RequestParam("cid")Long cid,
+                                                 @RequestParam(value="type",required = false)Integer type){
+          PageVo page=attrService.queryAttrByCidOrTypePage(queryCondition,cid,type);
+
+       return Resp.ok(page);
+    }
 
     /**
      * 列表

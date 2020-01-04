@@ -1,7 +1,13 @@
 package com.atguigu.gmall.pms.service.impl;
 
+import com.atguigu.gmall.pms.Vo.GroupVo;
+import com.atguigu.gmall.pms.dao.AttrAttrgroupRelationDao;
+import com.atguigu.gmall.pms.dao.AttrDao;
+import com.atguigu.gmall.pms.entity.AttrAttrgroupRelationEntity;
+import com.atguigu.gmall.pms.entity.AttrEntity;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,9 +19,18 @@ import com.atguigu.gmall.pms.dao.AttrGroupDao;
 import com.atguigu.gmall.pms.entity.AttrGroupEntity;
 import com.atguigu.gmall.pms.service.AttrGroupService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
+
+    @Autowired
+    private AttrDao attrDao;
+
+    @Autowired
+    private AttrAttrgroupRelationDao relationDao;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -25,6 +40,35 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         );
 
         return new PageVo(page);
+    }
+
+    @Override
+    public PageVo queryGroupByCid(QueryCondition queryCondition, Long catId) {
+
+        IPage<AttrGroupEntity> page = this.page(
+                new Query<AttrGroupEntity>().getPage(queryCondition),
+                new QueryWrapper<AttrGroupEntity>().eq("catelog_id",catId)
+        );
+        return new PageVo(page);
+    }
+
+    @Override
+    public GroupVo queryGroupVoByGid(Long gid) {
+        GroupVo groupVo = new GroupVo();
+        AttrGroupEntity groupEntity = this.getById(gid);
+        BeanUtils.copyProperties(groupEntity,groupVo);
+
+        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("catelog_id",groupEntity.getCatelogId());
+        List<AttrEntity> list = attrDao.selectList(wrapper);
+        groupVo.setAttrEntities(list);
+
+
+        List<Long> list1 = list.stream().map(AttrEntity::getAttrId).collect(Collectors.toList());
+        List<AttrAttrgroupRelationEntity> relationEntities = relationDao.selectBatchIds(list1);
+        groupVo.setRelations(relationEntities);
+
+        return groupVo;
     }
 
 }
