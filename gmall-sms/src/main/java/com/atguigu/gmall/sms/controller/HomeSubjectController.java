@@ -24,7 +24,7 @@ import com.atguigu.gmall.sms.service.HomeSubjectService;
  *
  * @author saber
  * @email lxf@theking.com
- * @date 2020-01-02 15:43:27
+ * @date 2020-01-04 11:47:23
  */
 @Api(tags = "首页专题表【jd首页下面很多专题，每个专题链接新的页面，展示专题商品信息】 管理")
 @RestController

@@ -24,7 +24,7 @@ import com.atguigu.gmall.sms.service.CouponSpuRelationService;
  *
  * @author saber
  * @email lxf@theking.com
- * @date 2020-01-02 15:43:27
+ * @date 2020-01-04 11:47:23
  */
 @Api(tags = "优惠券与产品关联 管理")
 @RestController

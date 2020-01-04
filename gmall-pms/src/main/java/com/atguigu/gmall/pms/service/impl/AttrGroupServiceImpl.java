@@ -54,19 +54,23 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Override
     public GroupVo queryGroupVoByGid(Long gid) {
+        //根据id查询组
         GroupVo groupVo = new GroupVo();
         AttrGroupEntity groupEntity = this.getById(gid);
         BeanUtils.copyProperties(groupEntity,groupVo);
 
-        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq("catelog_id",groupEntity.getCatelogId());
-        List<AttrEntity> list = attrDao.selectList(wrapper);
+
+        //查询中间表
+        ;
+        List<AttrAttrgroupRelationEntity> relationEntities = relationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id",groupVo.getAttrGroupId()));
+        groupVo.setRelations(relationEntities);
+
+        //查询规格参数
+        List<Long> list1 = relationEntities.stream().map(relationEntity->relationEntity.getAttrId()).collect(Collectors.toList());
+
+        List<AttrEntity> list = attrDao.selectBatchIds(list1);
         groupVo.setAttrEntities(list);
 
-
-        List<Long> list1 = list.stream().map(AttrEntity::getAttrId).collect(Collectors.toList());
-        List<AttrAttrgroupRelationEntity> relationEntities = relationDao.selectBatchIds(list1);
-        groupVo.setRelations(relationEntities);
 
         return groupVo;
     }

@@ -24,7 +24,7 @@ import com.atguigu.gmall.sms.service.HomeAdvService;
  *
  * @author saber
  * @email lxf@theking.com
- * @date 2020-01-02 15:43:27
+ * @date 2020-01-04 11:47:23
  */
 @Api(tags = "首页轮播广告 管理")
 @RestController

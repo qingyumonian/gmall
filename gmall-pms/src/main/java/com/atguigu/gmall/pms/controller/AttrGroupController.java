@@ -35,7 +35,7 @@ public class AttrGroupController {
     private AttrGroupService attrGroupService;
 
     /**
-     *
+     * 查询组及组的规格参数
      * @param gid
      * @return
      */

@@ -24,7 +24,7 @@ import com.atguigu.gmall.sms.service.SkuLadderService;
  *
  * @author saber
  * @email lxf@theking.com
- * @date 2020-01-02 15:43:27
+ * @date 2020-01-04 11:47:23
  */
 @Api(tags = "商品阶梯价格 管理")
 @RestController
