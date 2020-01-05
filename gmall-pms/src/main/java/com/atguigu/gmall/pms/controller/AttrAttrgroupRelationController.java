@@ -34,7 +34,11 @@ public class AttrAttrgroupRelationController {
     @Autowired
     private AttrAttrgroupRelationService attrAttrgroupRelationService;
 
-
+    /**
+     * 删除关联关系
+     * @param relationEntities
+     * @return
+     */
     @PostMapping("/delete/attr")
     public Resp<String> deleteAttr(@RequestBody List<AttrAttrgroupRelationEntity> relationEntities){
 

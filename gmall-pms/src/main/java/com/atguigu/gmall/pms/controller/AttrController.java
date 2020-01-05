@@ -77,7 +77,7 @@ public class AttrController {
     }
 
     /**
-     * 保存
+     *  保存规格参数
      */
     @ApiOperation("保存")
     @PostMapping("/save")

@@ -1,5 +1,6 @@
 package com.atguigu.gmall.pms.controller;
 
+import java.lang.annotation.Repeatable;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -7,9 +8,11 @@ import java.util.Map;
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
+import com.atguigu.gmall.pms.Vo.SpuInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +35,23 @@ import com.atguigu.gmall.pms.service.SpuInfoService;
 public class SpuInfoController {
     @Autowired
     private SpuInfoService spuInfoService;
+
+    /**
+     *  检索商品
+     * @param queryCondition
+     * @param cid
+     * @return
+     */
+    @GetMapping
+    public Resp<PageVo> querySpuByCidOrKey(QueryCondition queryCondition,
+                                           @RequestParam(value="catId",defaultValue = "0")Long cid){
+       PageVo page=spuInfoService.querySpuByCidOrKey(queryCondition,cid);
+
+       return Resp.ok(page);
+
+    }
+
+
 
     /**
      * 列表
@@ -64,8 +84,8 @@ public class SpuInfoController {
     @ApiOperation("保存")
     @PostMapping("/save")
     @PreAuthorize("hasAuthority('pms:spuinfo:save')")
-    public Resp<Object> save(@RequestBody SpuInfoEntity spuInfo){
-		spuInfoService.save(spuInfo);
+    public Resp<Object> save(@RequestBody SpuInfoVo spuInfoVo){
+		spuInfoService.bigSave(spuInfoVo);
 
         return Resp.ok(null);
     }
