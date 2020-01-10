@@ -41,7 +41,7 @@ public class WareSkuController {
      * @param skuId
      * @return
      */
-    @GetMapping("{skuId}")
+    @GetMapping("{skuId}")//注意这里名称写错了，但是牵涉太多不好改，原本的名称为：querySkuBySkuId
     public Resp<List<WareSkuEntity>> querySkuBySpuId(@PathVariable("skuId")Long skuId){
 
         List<WareSkuEntity> skuEntities = wareSkuService.list(new QueryWrapper<WareSkuEntity>().eq("sku_id", skuId));

@@ -14,13 +14,13 @@ import javax.sql.DataSource;
 public class DataSourceConfig {
 
 
-    @Bean
-    @Primary
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource(@Value("${spring.datasource.url}")String url){
-
-        HikariDataSource hikariDataSource = new HikariDataSource();
-        hikariDataSource.setJdbcUrl(url);
-        return hikariDataSource;
-    }
+//    @Bean
+//    @Primary
+//    @ConfigurationProperties(prefix = "spring.datasource")
+//    public DataSource dataSource(@Value("${spring.datasource.url}")String url){
+//
+//        HikariDataSource hikariDataSource = new HikariDataSource();
+//        hikariDataSource.setJdbcUrl(url);
+//        return hikariDataSource;
+//    }
 }
