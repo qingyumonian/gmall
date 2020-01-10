@@ -1,0 +1,579 @@
+GET _search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+
+
+GET  _cat/in dices?v
+
+
+GET movie_index
+
+GET _analyze
+{
+  "analyzer": "ik_max_word", 
+  "text": "我是中国人"
+}
+
+
+PUT  /atguigu
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 2
+  }
+}
+
+PUT atguigu/_mapping/goods
+{
+  "properties": {
+    "title": {
+      "type": "text",
+      "analyzer": "ik_max_word"
+    },
+    "images": {
+      "type": "keyword",
+      "index": "false"
+    },
+    "price": {
+      "type": "long"
+    }
+  }
+}
+
+
+GET atguigu/_mapping
+
+POST /atguigu/goods
+{   
+  "title": "华为手机",
+  "images": "http://image.jd.com/12479122.jpg",
+  "price": 4288
+}
+
+POST /atguigu/goods/1
+{
+  "title": "华为手机",
+  "images": "http://image.jd.com/12479122.jpg",
+  "price": 4288
+}
+
+
+get /atguigu/_search
+
+get _cat/indices/atguigu?v
+
+get /atguigu
+
+
+POST /atguigu/goods/2
+{
+    "title":"小米手机",
+    "images":"http://image.jd.com/12479122.jpg",
+    "price":2899,
+    "stock": 200,
+    "saleable":true,
+    "attr": {
+        "category": "手机",
+        "brand": "小米"
+    }
+}
+
+get /atguigu/goods/2
+
+post /atguigu/goods/2/_update
+{
+  "doc":{
+    "price":1000
+  }
+}
+
+POST /atguigu/goods/_bulk
+{"index":{"_id":1}}
+{ "title":"小米手机", "images":"http://image.jd.com/12479122.jpg", "price":1999, "stock": 200, "attr": { "category": "手机", "brand": "小米" } }
+{"index":{"_id":2}}
+{"title":"超米手机", "images":"http://image.jd.com/12479122.jpg", "price":2999, "stock": 300, "attr": { "category": "手机", "brand": "小米" } }
+{"index":{"_id":3}}
+{ "title":"小米电视", "images":"http://image.jd.com/12479122.jpg", "price":3999, "stock": 400, "attr": { "category": "电视", "brand": "小米" } }
+{"index":{"_id":4}}
+{ "title":"小米笔记本", "images":"http://image.jd.com/12479122.jpg", "price":4999, "stock": 200, "attr": { "category": "笔记本", "brand": "小米" } }
+{"index":{"_id":5}}
+{ "title":"华为手机", "images":"http://image.jd.com/12479122.jpg", "price":3999, "stock": 400, "attr": { "category": "手机", "brand": "华为" } }
+{"index":{"_id":6}}
+{ "title":"华为笔记本", "images":"http://image.jd.com/12479122.jpg", "price":5999, "stock": 200, "attr": { "category": "笔记本", "brand": "华为" } }
+{"index":{"_id":7}}
+{ "title":"荣耀手机", "images":"http://image.jd.com/12479122.jpg", "price":2999, "stock": 300, "attr": { "category": "手机", "brand": "华为" } }
+{"index":{"_id":8}}
+{ "title":"oppo手机", "images":"http://image.jd.com/12479122.jpg", "price":2799, "stock": 400, "attr": { "category": "手机", "brand": "oppo" } }
+{"index":{"_id":9}}
+{ "title":"vivo手机", "images":"http://image.jd.com/12479122.jpg", "price":2699, "stock": 300, "attr": { "category": "手机", "brand": "vivo" } }
+{"index":{"_id":10}}
+{ "title":"华为nova手机", "images":"http://image.jd.com/12479122.jpg", "price":2999, "stock": 300, "attr": { "category": "手机", "brand": "华为" } }
+
+
+GET /atguigu/_search
+{
+  "query": {
+    "match": {
+      "title": "小米"
+    }
+  }
+}
+
+
+GET /atguigu/_search
+{
+  "query": {
+    "match_phrase": {
+      "title": "小米手机"
+    }
+  }
+}
+
+GET /atguigu/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "小米",
+      "fields": ["title","attr.brand.keyword"]
+    }
+  }
+}
+
+
+GET /atguigu/_search
+{
+  "query": {
+    "terms": {
+      "attr.brand.keyword": [
+        "小米",
+        "电视"
+      ]
+    }
+  }
+}
+
+
+GET /atguigu/_search
+{
+  "query": {
+   "range": {
+     "price": {
+       "gte": 100,
+       "lte": 2000
+     }
+   }
+  }
+}
+
+
+
+GET /atguigu/_search
+{
+  "query": {
+    "fuzzy": {
+      "title": {
+        "value": "eppe",
+        "fuzziness": 2
+        
+      }
+    }
+    
+  }
+}
+
+
+GET atguigu/_search
+{
+  "query":{
+    "bool": {
+      "must": 
+        {
+          "match":{
+            "title": "小米"
+          }
+        },
+      "filter": {
+        "range": {
+          "price": {
+            "gte": 2000
+          }
+        }
+      }
+    }
+  }
+  
+}
+
+
+
+GET /atguigu/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": { "title": "小米" }
+      },
+      "filter": {
+        "range": {
+          "price": { "gt": 2000, "lt": 3000 }
+        }
+      }
+    }
+  }
+}
+
+
+GET atguigu/_search
+{
+  "query": {
+    "match": {
+      "title": "手机"
+    }
+  },
+  "sort": [
+    {
+      "price": {
+        "order": "desc"
+      }
+    },{
+      "_score": {
+        "order": "desc"
+      }
+    }
+  ],
+  "from": 4,
+  "size": 4,
+  "highlight": {
+    "fields": {
+      "title": {}
+    },
+    "pre_tags": "<em>",
+    "post_tags": "</em>"
+  },
+  "_source": ["title","images","price"]
+  
+}
+
+GET user/_search
+{
+  "query": {
+   "range": {
+     "age": {
+       "gte": 10,
+       "lte": 3000
+     }
+   }
+  },
+  "sort": [
+    {
+      "age": {
+        "order": "desc"
+      }
+    }
+  ],
+  "from": 0,
+  "size": 4,
+  "highlight": {
+    "fields": {
+      "name": {}
+    },
+    "pre_tags": "<em>",
+    "post_tags": "</em>"
+  },
+  "_source": ["name","age","password"]
+  
+}
+
+#按照某种方式对数据进行分组
+GET /atguigu/_search
+{
+  "size": 20, 
+  "aggs": {
+    "brandAgg": {
+      "terms": {
+        "field": "attr.brand.keyword"
+      },
+      "aggs": {
+        "priceAvg": {
+          "avg": {
+            "field": "price"
+          } 
+         
+        }
+      }
+    }
+  }
+}
+
+GET _analyze
+{
+  "analyzer": "ik_smart",
+  "text": "誓约胜利之剑"
+}
+
+
+
+
+GET  /user/_search
+{
+  "query": {
+    "range": {
+      "age": {
+        "gte": 10,
+        "lte": 20
+      }
+    }
+  }
+}
+
+DELETE  user
+
+
+GET user/_search
+{
+  "query": {
+    "range": {
+      "age": {
+        "gte": 19,
+        "lte": 30
+      }
+    }
+  },
+  "sort": [
+    {
+      "age": {
+        "order": "desc"
+      }
+    }
+  ],
+  "from": 0,
+  "size": 4,
+ "highlight": {
+    "fields": {
+      "name": {}
+    },
+    "pre_tags": "<em>",
+    "post_tags": "</em>"
+  }
+}
+
+
+
+GET /user/_search
+{
+  "query": {
+    "match": {
+      "name": "冰冰"
+    }
+  },
+  "highlight": {
+    "fields": {"name": {}}, 
+    "pre_tags": "<em>",
+    "post_tags": "</em>"
+  }
+}
+
+DELETE goods
+
+GET goods/_search
+{
+  "query": {
+    "match": {
+      "skuTitle": "小米"
+    }
+  }
+}
+GET goods/_mapping
+GET goods/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "skuTitle": {
+              "query": "小米手机",
+              "operator": "or"
+            }
+          }
+        }
+      ],
+      "filter": [
+        {
+          "terms": {
+            "brandId": [
+              "6","8"
+            ]
+          }
+        },
+        {
+          "term": {
+            "categoryId": "225"
+          }
+        },
+        {
+          "range": {
+            "price": {
+              "gte": 1000,
+              "lte": 9999999999
+            }
+          }
+        },
+        {
+          "nested": {
+            "path": "attrs",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "term": {
+                      "attrs.attrId": 34
+                    }
+                  },
+                  {
+                    "terms":{
+                      "attrs.attrValue":[
+                          "5,7","6"
+                        ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "price": {
+        "order": "desc"
+      }
+    }
+  ], 
+  "from": 0,
+  "size": 20,
+  "highlight": {"fields": {"skuTitle": {}},
+     "pre_tags": "<em>",
+     "post_tags": "</em>"
+  },
+  "aggs": {
+    "brandIdAgg": {
+      "terms": {
+        "field": "brandId"
+      
+      },
+      "aggs": {
+        "brandNameAgg": {
+          "terms": {
+            "field": "brandName"
+          }
+        }
+      }
+    },
+      "categoryIdAgg":{
+        "terms": {
+          "field": "categoryId"
+        },
+        "aggs": {
+          "categoryNameAgg": {
+            "terms": {
+              "field": "categoryName"
+            }
+          }
+        }
+      },
+      "attrAgg":{
+        "nested": {
+          "path": "attrs"
+        },
+        "aggs": {
+          "attrIdAgg": {
+            "terms": {
+              "field": "attrs.attrId"
+            },
+            "aggs": {
+              "attrNameAgg": {
+                "terms": {
+                  "field": "attrs.attrName"
+                }
+              },
+              "attrValueAgg":{
+                "terms": {
+                  "field": "attrs.attrValue"
+                }
+              }
+            }
+          }
+        }
+      }
+      
+    
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

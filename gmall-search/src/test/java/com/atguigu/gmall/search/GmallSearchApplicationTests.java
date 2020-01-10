@@ -1,6 +1,5 @@
 package com.atguigu.gmall.search;
 
-import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
 import com.atguigu.gmall.pms.entity.*;
@@ -15,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.util.CollectionUtils;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,7 +78,7 @@ class GmallSearchApplicationTests {
                             goods.setStore(wareSkuEntities.stream().anyMatch(wareSkuEntity -> wareSkuEntity.getStock() > 0));
                         }
                         goods.setSkuId(skuInfoEntity.getSkuId());
-                        goods.setSale(10l);
+                        goods.setSale(10L);
                         goods.setPrice(skuInfoEntity.getPrice().doubleValue());
                         goods.setCreateTime(spuInfoEntity.getCreateTime());
                         Resp<CategoryEntity> categoryEntityResp = this.pmsClient.queryCategoryById1(skuInfoEntity.getCatalogId());
@@ -109,13 +106,11 @@ class GmallSearchApplicationTests {
                         goods.setDefaultImage(skuInfoEntity.getSkuDefaultImg());
                         goods.setSkuSubTitle(skuInfoEntity.getSkuSubtitle());
                         goods.setSkuTitle(skuInfoEntity.getSkuTitle());
-
                         return goods;
                     }).collect(Collectors.toList());
                     this.repository.saveAll(goodsList);
                 }
             });
-
             pageSize = (long) spuInfoEntities.size();
             pageNum++;
         } while (pageSize == 100);

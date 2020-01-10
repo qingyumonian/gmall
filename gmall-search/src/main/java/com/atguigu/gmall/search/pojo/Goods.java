@@ -5,7 +5,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +39,6 @@ public class Goods {
     private Long categoryId;
     @Field(type = FieldType.Keyword)
     private String categoryName;
-    @Field(type = FieldType.Nested)//嵌套
+    @Field(type = FieldType.Nested)//嵌套，当为nested时，说明该字段为嵌套字段
     private List<SearchAttrValue> attrs;
 }
