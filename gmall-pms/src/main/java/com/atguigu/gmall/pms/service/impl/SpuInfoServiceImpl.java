@@ -30,6 +30,8 @@ import com.atguigu.core.bean.Query;
 import com.atguigu.core.bean.QueryCondition;
 
 import com.atguigu.gmall.pms.service.SpuInfoService;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 
@@ -88,46 +90,30 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         return new PageVo(page);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void bigSave(SpuInfoVo spuInfoVo) {
 
         //1.保存spu相关信息
         //   1.1spuinfo
-        spuInfoVo.setCreateTime(new Date());
-        spuInfoVo.setUodateTime(spuInfoVo.getCreateTime());
-        this.save(spuInfoVo);
-        Long spuId = spuInfoVo.getId();
+        Long spuId = saveSpuInfo(spuInfoVo);
 
         //1.2 spuinfodesc   spu的描述信息
-        List<String> spuImages = spuInfoVo.getSpuImages();
-        if(!CollectionUtils.isEmpty(spuImages)){
-            SpuInfoDescEntity descEntity = new SpuInfoDescEntity();
-            descEntity.setSpuId(spuId);
-            descEntity.setDecript(StringUtils.join(spuImages,","));
-            this.spuInfoDescDao.insert(descEntity);
-        }
+        saveSpuDesc(spuInfoVo, spuId);
         //1.3基础属性相关信息
-        List<BaseAttrValueVo> baseAttrs = spuInfoVo.getBaseAttrs();
-
-        if(!CollectionUtils.isEmpty(baseAttrs)){
-            List<ProductAttrValueEntity> attrValueEntities = baseAttrs.stream().map(baseAttrValueVo -> {
-                ProductAttrValueEntity attrValueEntity = new ProductAttrValueEntity();
-
-                BeanUtils.copyProperties(baseAttrValueVo, attrValueEntity);
-                attrValueEntity.setSpuId(spuId);
-                attrValueEntity.setAttrSort(0);
-                attrValueEntity.setQuickShow(0);
-                return attrValueEntity;
-            }).collect(Collectors.toList());
-            this.productAttrValueService.saveBatch(attrValueEntities);
-        }
-
+        saveBaseAttrValue(spuInfoVo, spuId);
 
 
         //2.sku相关信息
+        saveSkuAndSales(spuInfoVo, spuId);
+
+        sendMag(spuId,"insert");
+    }
+
+    private boolean saveSkuAndSales(SpuInfoVo spuInfoVo, Long spuId) {
         List<SkuInfoVo> skus = spuInfoVo.getSkus();
         if(CollectionUtils.isEmpty(skus)){
-            return;
+            return true;
         }
 
         skus.forEach(sku ->{
@@ -175,8 +161,43 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             saleVo.setSkuId(skuId);
             smsClient.saveSales(saleVo);
         } );
+        return false;
+    }
 
-        sendMag(spuId,"insert");
+    private void saveBaseAttrValue(SpuInfoVo spuInfoVo, Long spuId) {
+        List<BaseAttrValueVo> baseAttrs = spuInfoVo.getBaseAttrs();
+
+        if(!CollectionUtils.isEmpty(baseAttrs)){
+            List<ProductAttrValueEntity> attrValueEntities = baseAttrs.stream().map(baseAttrValueVo -> {
+                ProductAttrValueEntity attrValueEntity = new ProductAttrValueEntity();
+
+                BeanUtils.copyProperties(baseAttrValueVo, attrValueEntity);
+                attrValueEntity.setSpuId(spuId);
+                attrValueEntity.setAttrSort(0);
+                attrValueEntity.setQuickShow(0);
+                return attrValueEntity;
+            }).collect(Collectors.toList());
+            this.productAttrValueService.saveBatch(attrValueEntities);
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)//没有起作用
+    public void saveSpuDesc(SpuInfoVo spuInfoVo, Long spuId) {
+        
+        List<String> spuImages = spuInfoVo.getSpuImages();
+        if (!CollectionUtils.isEmpty(spuImages)) {
+            SpuInfoDescEntity descEntity = new SpuInfoDescEntity();
+            descEntity.setSpuId(spuId);
+            descEntity.setDecript(StringUtils.join(spuImages, ","));
+            this.spuInfoDescDao.insert(descEntity);
+        }
+    }
+
+    private Long saveSpuInfo(SpuInfoVo spuInfoVo) {
+        spuInfoVo.setCreateTime(new Date());
+        spuInfoVo.setUodateTime(spuInfoVo.getCreateTime());
+        this.save(spuInfoVo);
+        return spuInfoVo.getId();
     }
 
     private void sendMag(Long spuId,String type){

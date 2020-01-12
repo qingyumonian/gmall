@@ -69,9 +69,9 @@ public class SpuInfoController {
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('pms:spuinfo:list')")
     public Resp<PageVo> list(QueryCondition queryCondition) {
-        PageVo page = spuInfoService.queryPage(queryCondition);
+        PageVo pageVo = spuInfoService.queryPage(queryCondition);
 
-        return Resp.ok(page);
+        return Resp.ok(pageVo);
     }
 
 
