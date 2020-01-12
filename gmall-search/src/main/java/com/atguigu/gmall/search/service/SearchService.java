@@ -59,6 +59,7 @@ public class SearchService {
         return responseVo;
     }
 
+    //数据的解析封装
     private SearchResponseVo parseSearchResult( SearchResponse search){
         SearchResponseVo responseVo = new SearchResponseVo();
         //查询结果集的封装
@@ -100,9 +101,6 @@ public class SearchService {
             brandVO.setValue(brandValues);
             responseVo.setBrand(brandVO);
         }
-
-
-
 
         //解析分类的聚合结果集
 
@@ -154,6 +152,8 @@ public class SearchService {
         return  responseVo;
     }
 
+
+    //查询数据
     private SearchSourceBuilder buildDSL(SearchParam searchParam) {
 
         String key = searchParam.getKey();
@@ -195,7 +195,6 @@ public class SearchService {
                 subBoolQuery.must(QueryBuilders.termsQuery("attrs.attrValue", split[1].split("-")));
                 //将子查询加入到嵌套查询中去
                 boolQuery.must(QueryBuilders.nestedQuery("attrs", subBoolQuery, ScoreMode.None));
-
                 //将嵌套查询加入query中去
                 boolQueryBuilder.filter(boolQuery);
 

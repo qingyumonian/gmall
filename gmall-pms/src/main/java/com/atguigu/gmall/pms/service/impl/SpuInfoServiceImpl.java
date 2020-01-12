@@ -11,6 +11,7 @@ import com.atguigu.gmall.pms.service.ProductAttrValueService;
 import com.atguigu.gmall.pms.service.SkuImagesService;
 import com.atguigu.gmall.pms.service.SkuSaleAttrValueService;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Autowired
     private GmallSmsClient smsClient;
+
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -171,14 +176,11 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             smsClient.saveSales(saleVo);
         } );
 
+        sendMag(spuId,"insert");
+    }
 
-
-
-
-
-
-
-
+    private void sendMag(Long spuId,String type){
+        amqpTemplate.convertAndSend("GMALL-PMS-EXCHANGE","item."+type,spuId);
     }
 
 }

@@ -65,9 +65,11 @@ class GmallSearchApplicationTests {
 
             // 遍历spu，获取sku导入es
             spuInfoEntities.forEach(spuInfoEntity -> {
+                //获取每个spu中的所有sku的商品的相关信息
                 Resp<List<SkuInfoEntity>> skuResp = this.pmsClient.querySkuBySpuId(spuInfoEntity.getId());
                 List<SkuInfoEntity> skuInfoEntities = skuResp.getData();
                 if (!CollectionUtils.isEmpty(skuInfoEntities)) {
+                    //将获取的sku的信息封装成Goods对象，并写入elasticsearch中去
                     List<Goods> goodsList = skuInfoEntities.stream().map(skuInfoEntity -> {
                         Goods goods = new Goods();
 
@@ -108,6 +110,8 @@ class GmallSearchApplicationTests {
                         goods.setSkuTitle(skuInfoEntity.getSkuTitle());
                         return goods;
                     }).collect(Collectors.toList());
+
+                    //存储数据到es中
                     this.repository.saveAll(goodsList);
                 }
             });

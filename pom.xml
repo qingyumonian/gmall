@@ -14,7 +14,6 @@
         <module>gmall-admin</module>
         <module>elasticsearch-demo</module>
         <module>gmall-pms-interface</module>
-        <module>gmal-lwms-interface</module>
     </modules>
 
 </project>
