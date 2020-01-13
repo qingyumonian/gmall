@@ -13,9 +13,9 @@
         <module name="gmall-ums" />
         <module name="gmall-wms" />
         <module name="gmall-pms-interface" />
-        <module name="gmall-index" />
-        <module name="gmall-gateway" />
         <module name="gmall-admin" />
+        <module name="gmall-gateway" />
+        <module name="gmall-index" />
         <module name="elasticsearch-demo" />
         <module name="gmall-wms-interface" />
         <module name="gmall-core" />
