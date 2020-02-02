@@ -35,6 +35,12 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    /**
+     *  数据的校验（手机号、用户名的唯一性）
+     * @param data
+     * @param type
+     * @return
+     */
     @GetMapping("check/{data}/{type}")
     public Resp<Object> checkData(@PathVariable("data")String data,@PathVariable("type")Integer type){
 
@@ -43,6 +49,12 @@ public class MemberController {
         return  Resp.ok(b);
     }
 
+    /**
+     * 用户的注册
+     * @param memberEntity
+     * @param code
+     * @return
+     */
     @PostMapping("register")
     public Resp<Object>register(MemberEntity memberEntity,@RequestParam("code")String code){
         this.memberService.register(memberEntity,code);

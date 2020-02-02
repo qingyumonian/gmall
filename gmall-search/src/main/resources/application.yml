@@ -6,10 +6,10 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
   rabbitmq:
-    virtual-host: /theking
-    host: 192.168.232.128
-    username: theking
-    password: 1217
+    virtual-host: /theking #虚拟主机名称以/开头
+    host: 192.168.232.128  #地址
+    username: theking      #用户名
+    password: 1217         #密码
   elasticsearch:
     rest:
       uris: http://192.168.232.128:9200

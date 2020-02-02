@@ -4,6 +4,7 @@ import com.atguigu.gmall.pms.Vo.AttrVo;
 import com.atguigu.gmall.pms.dao.AttrAttrgroupRelationDao;
 import com.atguigu.gmall.pms.entity.AttrAttrgroupRelationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -20,6 +21,7 @@ import com.atguigu.gmall.pms.service.AttrService;
 
 @Service("attrService")
 public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements AttrService {
+
 
 
     @Autowired

@@ -34,6 +34,7 @@ public class PmsListener {
     @Autowired
     private GmallWmsClient wmsClient;
 
+           //@Queue：durable = "true"队列持久化
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "GMALL-SEARCH-QUEUE",durable = "true"),
             exchange = @Exchange(value = "GMALL-PMS-EXCHANGE",ignoreDeclarationExceptions = "true",type = ExchangeTypes.TOPIC),

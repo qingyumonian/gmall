@@ -32,9 +32,12 @@ public class GmallCacheAspect {
     @Around("@annotation(com.atguigu.gmall.index.config.GmallCache)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable{
 
+        //获取连接点签名
         MethodSignature singnature=(MethodSignature)joinPoint.getSignature();
+        //获取签名中的所有方法
         Method method = singnature.getMethod();
         Class returnType = singnature.getReturnType();//获取切点方法的返回值类型
+        //获取连接点的注解信息
         GmallCache gmallCache = method.getAnnotation(GmallCache.class);//获取注解对象
 
         //1.获取缓存数据
@@ -65,7 +68,7 @@ public class GmallCacheAspect {
         //把查询出来的数据放入缓存
         redisTemplate.opsForValue().set(key,JSON.toJSONString(result),gmallCache.timeout()+new Random().nextInt(gmallCache.bound()), TimeUnit.MINUTES);
 
-
+        //释放锁
         fairLock.unlock();
         return result;
     }

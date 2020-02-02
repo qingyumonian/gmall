@@ -202,7 +202,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     }
 
     private void sendMag(Long spuId,String type){
-        amqpTemplate.convertAndSend("GMALL-PMS-EXCHANGE","item."+type,spuId);
+        try {
+            amqpTemplate.convertAndSend("GMALL-PMS-EXCHANGE","item."+type,spuId);
+        }catch (Exception e){
+//            logger.error("{}商品消息发送异常，商品id：{}", type, spuId, e);
+        }
+
     }
 
 }

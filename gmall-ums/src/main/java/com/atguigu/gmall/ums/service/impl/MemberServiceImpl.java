@@ -87,13 +87,13 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
         MemberEntity memberEntity = this.getOne(new QueryWrapper<MemberEntity>().eq("username", username));
         if(memberEntity==null){
-            throw new UmsException("用户名和密码错误");
+            return null;
         }
         String salt = memberEntity.getSalt();
         String s = DigestUtils.md5Hex(password + salt);
 
         if(!StringUtils.equals(s,memberEntity.getPassword())){
-            throw new UmsException("用户名和密码错误");
+            return null;
         }
 
         return  memberEntity;

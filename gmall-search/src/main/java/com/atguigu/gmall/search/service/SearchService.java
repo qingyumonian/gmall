@@ -152,7 +152,7 @@ public class SearchService {
     }
 
 
-    //查询数据
+    //封装约束参数并查询数据
     private SearchSourceBuilder buildDSL(SearchParam searchParam) {
 
         String key = searchParam.getKey();
@@ -163,7 +163,7 @@ public class SearchService {
         }
         //1.构建查询条件
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        //1.1构建查询条件
+        //1.1品牌名称的过滤
         boolQueryBuilder.must(QueryBuilders.matchQuery("skuTitle", key).operator(Operator.OR));
         //1.2构建过滤条件
         //1.2.1品牌的过滤
