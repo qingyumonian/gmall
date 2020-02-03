@@ -28,7 +28,7 @@ export default [
     props: (route) => {return route.params}
   },
   {
-    path: '/cart',
+    path: '/pojo',
     component: Cart,
     meta:{notheader:true}
   },

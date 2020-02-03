@@ -21,6 +21,7 @@
         <module name="elasticsearch-demo" />
         <module name="gmall-wms-interface" />
         <module name="gmall-ums-interface" />
+        <module name="gmall-cart" />
         <module name="gmall-core" />
         <module name="gmall-auth" />
         <module name="gmall-search" />
@@ -31,6 +32,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="gmall-admin" options="-parameters" />
       <module name="gmall-auth" options="-parameters" />
+      <module name="gmall-cart" options="-parameters" />
       <module name="gmall-gateway" options="-parameters" />
       <module name="gmall-generator" options="-parameters" />
       <module name="gmall-index" options="-parameters" />
