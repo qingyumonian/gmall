@@ -16,7 +16,7 @@ public class Cart {
     private List<SkuSaleAttrValueEntity> saleAttrs;//销售属性
     private BigDecimal price;
     private Integer count;
-    private Boolean store;//库存
+    private Boolean store=false;//库存
     private Boolean check;//选中状态
     private List<ItemSaleVO> sales;//促销信息
 

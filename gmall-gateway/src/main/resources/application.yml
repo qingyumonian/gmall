@@ -49,4 +49,4 @@ spring:
 jwt:
   token:
     pubKeyPath: C:\Users\saber\Desktop\shop\code\rsa\rsa.pub # 公钥地址
-    cookieName: GMALL_TOKEN
+    cookieName: GMALL_TOKEN    #用户信息

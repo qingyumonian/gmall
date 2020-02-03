@@ -8,6 +8,7 @@ import java.util.Map;
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,14 @@ public class SkuSaleAttrValueController {
         return  Resp.ok(skuSaleAttrValueEntities);
     }
 
+    @GetMapping("sku/{skuId}")
+    public Resp<List<SkuSaleAttrValueEntity>>querySaleAttrValueBySkuId(@PathVariable("skuId") Long skuId){
+
+        List<SkuSaleAttrValueEntity> skuSaleAttrValueEntities = skuSaleAttrValueService.list(new QueryWrapper<SkuSaleAttrValueEntity>().eq("sku_id", skuId));
+
+        return Resp.ok(skuSaleAttrValueEntities);
+
+    }
 
     /**
      * 列表

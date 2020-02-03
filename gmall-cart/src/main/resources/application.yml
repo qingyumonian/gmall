@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8090
 spring:
   cloud:
     nacos:
@@ -12,5 +12,5 @@ jwt:
   token:
     pubKeyPath: C:\Users\saber\Desktop\shop\code\rsa\rsa.pub # 公钥地址
     cookieName: GMALL_TOKEN
-    userKey: user-key
+    userKey: user-key    #游客
     expireTime: 7776000

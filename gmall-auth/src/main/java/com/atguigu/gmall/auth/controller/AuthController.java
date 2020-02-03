@@ -24,6 +24,15 @@ public class AuthController {
     @Autowired
     private JwtProperties jwtProperties;
 
+
+    /**
+     * token中存放了用户的信息（用户名和id）
+     * @param username
+     * @param password
+     * @param request
+     * @param response
+     * @return
+     */
     @PostMapping("accredit")
     public Resp<Object> accredit(
             @RequestParam("username")String username,
