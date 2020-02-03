@@ -49,6 +49,13 @@ public class MemberController {
         return  Resp.ok(b);
     }
 
+    @PostMapping("code")
+    public Resp<Object> sendCode(@RequestParam("phone")String phone){
+
+        memberService.sendCode(phone);
+        return  Resp.ok(null);
+    }
+
     /**
      * 用户的注册
      * @param memberEntity

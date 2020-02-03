@@ -3,11 +3,14 @@ package com.atguigu.gmall.ums.service.impl;
 import com.atguigu.core.exception.UmsException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -30,6 +33,9 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -97,6 +103,19 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         }
 
         return  memberEntity;
+    }
+
+    @Override
+    public void sendCode(String phone) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("phone",phone);
+        map.put("function","验证身份");
+        map.put("code",UUID.randomUUID().toString().substring(0,4));
+        try {
+            amqpTemplate.convertAndSend("GMALL-SEND-EXCHANGE","send.code",map);
+        } catch (AmqpException e) {
+            e.printStackTrace();
+        }
     }
 
 }
