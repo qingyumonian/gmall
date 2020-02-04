@@ -55,7 +55,5 @@ public class UmsListener {
 
         System.out.println(map.get("code"));
     }
-    public void test(){
 
-    }
 }

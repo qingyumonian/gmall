@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -110,7 +107,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         HashMap<String, Object> map = new HashMap<>();
         map.put("phone",phone);
         map.put("function","验证身份");
-        map.put("code",UUID.randomUUID().toString().substring(0,4));
+        map.put("code", new Random().nextInt(8000)+1000);
         try {
             amqpTemplate.convertAndSend("GMALL-SEND-EXCHANGE","send.code",map);
         } catch (AmqpException e) {
