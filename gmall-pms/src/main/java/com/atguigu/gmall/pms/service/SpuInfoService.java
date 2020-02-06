@@ -22,6 +22,6 @@ public interface SpuInfoService extends IService<SpuInfoEntity> {
 
     void bigSave(SpuInfoVo spuInfoVo);
 
-    public void saveSpuDesc(SpuInfoVo spuInfoVo, Long spuId);
+
 }
 

@@ -6,17 +6,17 @@ import com.atguigu.gmall.pms.Vo.SpuInfoVo;
 import com.atguigu.gmall.pms.dao.*;
 import com.atguigu.gmall.pms.entity.*;
 import com.atguigu.gmall.pms.feign.GmallSmsClient;
-import com.atguigu.gmall.pms.service.ProductAttrValueService;
-import com.atguigu.gmall.pms.service.SkuImagesService;
-import com.atguigu.gmall.pms.service.SkuSaleAttrValueService;
+import com.atguigu.gmall.pms.service.*;
 
 import com.atguigu.gmall.sms.vo.SaleVO;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +29,6 @@ import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.Query;
 import com.atguigu.core.bean.QueryCondition;
 
-import com.atguigu.gmall.pms.service.SpuInfoService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -59,6 +58,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Autowired
     private AmqpTemplate amqpTemplate;
+
+    @Autowired
+    private SpuInfoDescService spuInfoDescService;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -90,7 +92,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         return new PageVo(page);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @GlobalTransactional
     @Override
     public void bigSave(SpuInfoVo spuInfoVo) {
 
@@ -99,7 +101,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         Long spuId = saveSpuInfo(spuInfoVo);
 
         //1.2 spuinfodesc   spu的描述信息
-        saveSpuDesc(spuInfoVo, spuId);
+        spuInfoDescService.saveSpuDesc(spuInfoVo, spuId);
         //1.3基础属性相关信息
         saveBaseAttrValue(spuInfoVo, spuId);
 
@@ -108,6 +110,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         saveSkuAndSales(spuInfoVo, spuId);
 
         sendMag(spuId,"insert");
+        int i=1/0;
     }
 
     private boolean saveSkuAndSales(SpuInfoVo spuInfoVo, Long spuId) {
@@ -182,17 +185,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)//没有起作用
-    public void saveSpuDesc(SpuInfoVo spuInfoVo, Long spuId) {
-        
-        List<String> spuImages = spuInfoVo.getSpuImages();
-        if (!CollectionUtils.isEmpty(spuImages)) {
-            SpuInfoDescEntity descEntity = new SpuInfoDescEntity();
-            descEntity.setSpuId(spuId);
-            descEntity.setDecript(StringUtils.join(spuImages, ","));
-            this.spuInfoDescDao.insert(descEntity);
-        }
-    }
+
 
     private Long saveSpuInfo(SpuInfoVo spuInfoVo) {
         spuInfoVo.setCreateTime(new Date());

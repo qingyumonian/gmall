@@ -39,6 +39,8 @@ public class ItemService {
 
         ItemVO itemVO = new ItemVO();
         //根据sku的id查询sku
+
+
         CompletableFuture<SkuInfoEntity> completableFuture = CompletableFuture.supplyAsync(() -> {
             itemVO.setSkuId(skuId);
             Resp<SkuInfoEntity> skuInfoEntityResp = pmsClient.querySkuById(skuId);
@@ -55,6 +57,8 @@ public class ItemService {
         },threadPoolExecutor);
 
         //根据sku中的品牌的id查询分类
+        //thenAcceptAsync:有参数，无返回
+        //thanApplyAsync: 有参数，有返回
         CompletableFuture<Void> cateCompletablbe = completableFuture.thenAcceptAsync(skuInfoEntity -> {
             Resp<CategoryEntity> categoryEntityResp = pmsClient.queryCategoryById1(skuInfoEntity.getCatalogId());
             CategoryEntity categoryEntity = categoryEntityResp.getData();
@@ -145,7 +149,6 @@ public class ItemService {
         CompletableFuture.allOf(completableFuture,cateCompletablbe,brandCompletablbe,spuCompletable,imagesCompletableFuture
                                ,skuCompletableFuture,saleCompletableFuture,descCompletableFuture,
                 groupCompletableFuture,attrValueCompletableFuture).join();
-
         return itemVO;
     }
 }
