@@ -1,5 +1,5 @@
 server:
-  port: 8090
+  port: 8092
 spring:
   cloud:
     nacos:
@@ -8,10 +8,11 @@ spring:
   redis:
     host: 192.168.232.128
   rabbitmq:
-    virtual-host: /theking #虚拟主机名称以/开头
-    host: 192.168.232.128  #地址
-    username: theking      #用户名
-    password: 1217         #密码
+    host: 192.168.232.128
+    port: 5672
+    virtual-host: /theking
+    username: theking
+    password: 1217
 
 jwt:
   token:

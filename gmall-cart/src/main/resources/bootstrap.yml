@@ -1,6 +1,6 @@
 spring:
   application:
-    name: pojo-service
+    name: cart-service
   cloud:
     nacos:
       config:

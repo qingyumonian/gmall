@@ -1,9 +1,9 @@
-package com.atguigu.gmall.cart.interceptor;
+package com.atguigu.gmall.order.interceptor;
 
+import com.atguigu.core.bean.UserInfo;
 import com.atguigu.core.utils.CookieUtils;
 import com.atguigu.core.utils.JwtUtils;
-import com.atguigu.gmall.cart.config.JwtProperties;
-import com.atguigu.core.bean.UserInfo;
+import com.atguigu.gmall.order.config.JwtProperties;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,12 +28,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         UserInfo userInfo = new UserInfo();
         String token = CookieUtils.getCookieValue(request, jwtProperties.getCookieName());
-        String userKey = CookieUtils.getCookieValue(request, jwtProperties.getUserKey());
-        if(StringUtils.isEmpty(userKey)){
-            //如果为空则制作一个
-            CookieUtils.setCookie(request,response,jwtProperties.getUserKey(), UUID.randomUUID().toString(),jwtProperties.getExpireTime());
-        }
-        userInfo.setUserKey(userKey);
+
         if(StringUtils.isEmpty(token)){
            //将userInfo传递到后续的业务
             THREAD_LOCAL.set(userInfo);

@@ -13,8 +13,10 @@
         <module name="gmall-generator" />
         <module name="gmall-sms" />
         <module name="gmall-ums" />
+        <module name="gmall-order" />
         <module name="gmall-wms" />
         <module name="gmall-pms-interface" />
+        <module name="gmall-cart-interface" />
         <module name="gmall-admin" />
         <module name="gmall-send" />
         <module name="gmall-gateway" />
@@ -39,6 +41,7 @@
       <module name="gmall-index" options="-parameters" />
       <module name="gmall-item" options="-parameters" />
       <module name="gmall-oms" options="-parameters" />
+      <module name="gmall-order" options="-parameters" />
       <module name="gmall-pms" options="-parameters" />
       <module name="gmall-search" options="-parameters" />
       <module name="gmall-send" options="-parameters" />

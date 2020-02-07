@@ -29,22 +29,18 @@ spring:
           predicates:
             - Path=/api/index/**
           filters:
-            - RewritePath= /api(?<segment>/?.*), $\{segment}
-        - id: index-route
-          uri: lb://item-service
+            - RewritePath=/api(?<segment>/?.*), $\{segment}
+        - id: order-route
+          uri: lb://order-service
           predicates:
-            - Path=/api/item/**
+            - Path=/api/order/**
           filters:
-            - RewritePath= /api(?<segment>/?.*), $\{segment}
-        - id: auth-service #授权中心
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/auth/**
-          filters:
-            - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - RewritePath=/api(?<segment>/?.*), $\{segment}
+            - Auth
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+
 
 jwt:
   token:

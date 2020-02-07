@@ -38,4 +38,33 @@ public class CartController {
        return Resp.ok(carts);
     }
 
+    @PostMapping("update")
+    public Resp<Object> updateCart(@RequestBody Cart cart){
+
+        cartService.updateCart(cart);
+        return Resp.ok(null);
+    }
+    @PostMapping("check")
+    public Resp<Object> checkCart(@RequestBody Cart cart){
+
+        cartService.checkCart(cart);
+        return Resp.ok(null);
+    }
+
+    @PostMapping("delete/{skuId}")
+    public Resp<Object>deleteCart(@PathVariable("skuId") Long skuId){
+
+        cartService.deleteCart(skuId);
+        return Resp.ok(null);
+    }
+
+    @GetMapping("{userId}")
+    public Resp<List<Cart>>queryCheckedCarts(@PathVariable("userId")Long userId){
+
+        List<Cart>carts= cartService.queryCheckedCarts(userId);
+        return Resp.ok(carts);
+    }
+
+
+
 }
