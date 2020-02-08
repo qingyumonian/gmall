@@ -7,13 +7,15 @@ import java.util.Map;
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
+import com.atguigu.gmall.oms.entity.OrderEntity;
+import com.atguigu.gmall.oms.vo.OrderSubmitVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.atguigu.gmall.oms.entity.OrderEntity;
+
 import com.atguigu.gmall.oms.service.OrderService;
 
 
@@ -32,6 +34,14 @@ import com.atguigu.gmall.oms.service.OrderService;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+
+
+//    @PostMapping("{userId}")
+//    public Resp<OrderEntity> saveOrder(@RequestBody OrderSubmitVo orderSubmitVo, @PathVariable("userId")Long userId){
+//        OrderEntity orderEntity=  orderService.saveOrder(orderSubmitVo,userId);
+//
+//        return  Resp.ok(null);
+//    }
 
     /**
      * 列表
@@ -53,6 +63,7 @@ public class OrderController {
     @GetMapping("/info/{id}")
     @PreAuthorize("hasAuthority('oms:order:info')")
     public Resp<OrderEntity> info(@PathVariable("id") Long id){
+
 		OrderEntity order = orderService.getById(id);
 
         return Resp.ok(order);

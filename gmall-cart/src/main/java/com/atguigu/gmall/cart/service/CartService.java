@@ -100,10 +100,12 @@ public class CartService {
 
             //保存当前商品的真实价格
             redisTemplate.opsForValue().set(CURRENT_PRICE_PREFIX + skuId, skuInfoEntity.getPrice().toString());
+//            cart.setCurrentPrice(skuInfoEntity.getPrice());
 
-            hashOps.put(skuId, JSON.toJSONString(cart));
+
 
         }
+        hashOps.put(skuId, JSON.toJSONString(cart));
 
     }
 

@@ -2,11 +2,14 @@ package com.atguigu.gmall.order.service;
 
 import com.atguigu.core.bean.Resp;
 import com.atguigu.core.bean.UserInfo;
+import com.atguigu.core.exception.OrderException;
 import com.atguigu.gmall.cart.pojo.Cart;
+import com.atguigu.gmall.oms.vo.OrderItemVo;
+import com.atguigu.gmall.oms.vo.OrderSubmitVo;
 import com.atguigu.gmall.order.feign.*;
 import com.atguigu.gmall.order.interceptor.LoginInterceptor;
 import com.atguigu.gmall.order.vo.OrderConfirmVo;
-import com.atguigu.gmall.order.vo.OrderItemVo;
+
 import com.atguigu.gmall.pms.entity.SkuInfoEntity;
 import com.atguigu.gmall.pms.entity.SkuSaleAttrValueEntity;
 import com.atguigu.gmall.sms.vo.ItemSaleVO;
@@ -16,16 +19,20 @@ import com.atguigu.gmall.wms.entity.WareSkuEntity;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
 @Service
 public class OrderService {
 
@@ -53,6 +60,7 @@ public class OrderService {
 //    private ThreadPoolExecutor threadPoolExecutor= new ThreadPoolExecutor(500, 800, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<>(100000));
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
+
     private static final String TOKEN_PREFIX="order:token:";
 
     public OrderConfirmVo confirm() {
@@ -152,5 +160,48 @@ public class OrderService {
         CompletableFuture.allOf(addressFuture,orderFuture,boundFuture,tokenFuture).join();
 
         return  orderConfirmVo;
+    }
+
+    public void submit(OrderSubmitVo orderSubmitVo) {
+
+            //1.校验是否重复提交
+           //判断redis中有没有，有没有提交，没有已经提交
+        String orderToken = orderSubmitVo.getOrderToken();
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+        Long flag = this.redisTemplate.execute(new DefaultRedisScript<>(script, Long.class), Arrays.asList(TOKEN_PREFIX + orderSubmitVo.getOrderToken()), orderToken);
+        if(flag==0){
+            throw new OrderException("请不要重复提交");
+        }
+
+        //2.验价
+        BigDecimal totalPrice = orderSubmitVo.getTotalPrice();//页面提交的总价
+        //获取数据库的实时价格
+        List<OrderItemVo> items = orderSubmitVo.getItems();
+        if(CollectionUtils.isEmpty(items)){
+            throw new OrderException("请选中商品");
+        }
+        BigDecimal reduce = items.stream().map(orderItemVo -> {
+            Long skuId = orderItemVo.getSkuId();
+            Resp<SkuInfoEntity> skuInfoEntityResp = pmsClient.querySkuById(skuId);
+            SkuInfoEntity skuInfoEntity = skuInfoEntityResp.getData();
+            if (skuInfoEntity != null) {
+                return skuInfoEntity.getPrice().multiply(new BigDecimal(orderItemVo.getCount()));
+            }
+            return new BigDecimal(0);
+        }).reduce((a, b) -> a.add(b)).get();
+
+        //比较价格是否一致
+        if(totalPrice.compareTo(reduce)!=0){
+            throw new OrderException("订单价格异常，请重新刷新页面");
+        }
+
+        //3.验证库存并锁定库存
+
+
+
+        //4.新增订单，订单状态为未支付
+
+        //5.删除购物车中的相应的记录
+
     }
 }

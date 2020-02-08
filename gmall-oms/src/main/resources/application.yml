@@ -12,7 +12,7 @@ spring:
     username: root
     password: Theking1217.
   redis:
-    host: 127.0.0.1
+    host: 192.168.232.128
 mybatis-plus:
   mapper-locations: classpath:mapper/pms/*.xml  # 读取映射文件
   global-config:
