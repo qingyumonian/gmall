@@ -12,9 +12,15 @@ spring:
     username: root
     password: Theking1217.
   redis:
-    host: 172.16.116.100
+    host: 192.168.232.128
+  rabbitmq:
+    host: 192.168.232.128
+    port: 5672
+    virtual-host: /theking
+    username: theking
+    password: 1217
 mybatis-plus:
-  mapper-locations: classpath:mapper/pms/*.xml  # 读取映射文件
+  mapper-locations: classpath:mapper/wms/*.xml  # 读取映射文件
   global-config:
     db-config:
       id-type: auto  # 默认使用数据库自增

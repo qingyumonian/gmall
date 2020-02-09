@@ -36,12 +36,12 @@ public class OrderController {
     private OrderService orderService;
 
 
-//    @PostMapping("{userId}")
-//    public Resp<OrderEntity> saveOrder(@RequestBody OrderSubmitVo orderSubmitVo, @PathVariable("userId")Long userId){
-//        OrderEntity orderEntity=  orderService.saveOrder(orderSubmitVo,userId);
-//
-//        return  Resp.ok(null);
-//    }
+    @PostMapping("{userId}")
+    public Resp<OrderEntity> saveOrder(@RequestBody OrderSubmitVo orderSubmitVo, @PathVariable("userId")Long userId){
+        OrderEntity orderEntity=  orderService.saveOrder(orderSubmitVo,userId);
+
+        return  Resp.ok(orderEntity);
+    }
 
     /**
      * 列表

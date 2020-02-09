@@ -4,7 +4,6 @@ import com.atguigu.gmall.wms.entity.WareSkuEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 

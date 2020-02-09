@@ -1,9 +1,11 @@
 package com.atguigu.gmall.wms.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.wms.vo.SkuLockVo;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +33,11 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Autowired
     private RedissonClient redissonClient;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    private static final String KEY_PREFIX="wms:stock:";
     @Override
     public PageVo queryPage(QueryCondition params) {
         IPage<WareSkuEntity> page = this.page(
@@ -51,7 +58,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
         //遍历清单集合，验库存并锁库存
         skuLockVos.forEach(skuLockVo -> {
-            checkLock(skuLockVo);
+                checkLock(skuLockVo);
         });
 
         //判断锁定的结果集中是否包含锁定失败的商品,如果包含就需要回滚锁定成功的数据
@@ -62,7 +69,8 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
             return skuLockVos;
         }
-
+        String orderToken = skuLockVos.get(0).getOrderToken();
+        redisTemplate.opsForValue().set(KEY_PREFIX+orderToken, JSON.toJSONString(skuLockVos));
         return null;
     }
 
@@ -79,7 +87,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         if(!CollectionUtils.isEmpty(wareSkuEntities)){
             //锁库存
             WareSkuEntity wareSkuEntity = wareSkuEntities.get(0);
-            int lock = wareSkuDao.lock(wareSkuEntity.getWareId(), skuLockVo.getCount());
+            int lock = wareSkuDao.lock(wareSkuEntity.getId(), skuLockVo.getCount());
             if(lock!=0){
                 skuLockVo.setLock(true);
                 skuLockVo.setWareSkuId(wareSkuEntity.getId());
@@ -87,5 +95,8 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         }
         fairLock.unlock();
     }
+
+
+
 
 }

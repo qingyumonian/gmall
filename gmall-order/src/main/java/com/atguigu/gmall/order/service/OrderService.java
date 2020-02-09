@@ -1,22 +1,26 @@
 package com.atguigu.gmall.order.service;
 
+import com.alibaba.fastjson.JSON;
 import com.atguigu.core.bean.Resp;
 import com.atguigu.core.bean.UserInfo;
 import com.atguigu.core.exception.OrderException;
 import com.atguigu.gmall.cart.pojo.Cart;
+import com.atguigu.gmall.oms.entity.OrderEntity;
 import com.atguigu.gmall.oms.vo.OrderItemVo;
 import com.atguigu.gmall.oms.vo.OrderSubmitVo;
 import com.atguigu.gmall.order.feign.*;
 import com.atguigu.gmall.order.interceptor.LoginInterceptor;
 import com.atguigu.gmall.order.vo.OrderConfirmVo;
-
 import com.atguigu.gmall.pms.entity.SkuInfoEntity;
 import com.atguigu.gmall.pms.entity.SkuSaleAttrValueEntity;
 import com.atguigu.gmall.sms.vo.ItemSaleVO;
 import com.atguigu.gmall.ums.entity.MemberEntity;
 import com.atguigu.gmall.ums.entity.MemberReceiveAddressEntity;
 import com.atguigu.gmall.wms.entity.WareSkuEntity;
+import com.atguigu.gmall.wms.vo.SkuLockVo;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -25,10 +29,10 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -47,6 +51,9 @@ public class OrderService {
     private GmallPmsClient pmsClient;
 
     @Autowired
+    private GmallOmsClient omsClient;
+
+    @Autowired
     private GmallWmsClient wmsClient;
 
 
@@ -55,6 +62,9 @@ public class OrderService {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
 
 //    private ThreadPoolExecutor threadPoolExecutor= new ThreadPoolExecutor(500, 800, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<>(100000));
@@ -196,12 +206,42 @@ public class OrderService {
         }
 
         //3.验证库存并锁定库存
-
-
+         List<SkuLockVo> skuLockVos=items.stream().map(orderItemVo -> {
+             SkuLockVo skuLockVo = new SkuLockVo();
+             skuLockVo.setSkuId(orderItemVo.getSkuId());
+             skuLockVo.setCount(orderItemVo.getCount());
+             skuLockVo.setOrderToken(orderSubmitVo.getOrderToken());
+         return skuLockVo;
+         }).collect(Collectors.toList());
+        Resp<List<SkuLockVo>> skuLockResp = wmsClient.checkAndLock(skuLockVos);
+        List<SkuLockVo> skuLockVoList = skuLockResp.getData();
+        if (!CollectionUtils.isEmpty(skuLockVoList)) {
+           throw new OrderException(JSON.toJSONString(skuLockVoList));
+        }
+        //异常：后续订单无法创建，定时释放库存
 
         //4.新增订单，订单状态为未支付
+        try {
+            UserInfo userInfo = LoginInterceptor.getUserInfo();
+            Resp<OrderEntity> orderEntityResp = omsClient.saveOrder(orderSubmitVo,userInfo.getUserId());
+            OrderEntity orderEntity = orderEntityResp.getData();
+        } catch (Exception e) {
+            //释放库存，消息队列（异步）
+            amqpTemplate.convertAndSend("ORDER-EXCHANGE","stock.unlock",orderSubmitVo.getOrderToken());
+            e.printStackTrace();
+            throw new OrderException("订单保存失败，服务错误") ;
+        }
 
         //5.删除购物车中的相应的记录
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("userId",LoginInterceptor.getUserInfo().getUserId());
+            List<Long> skuIds = items.stream().map(orderItemVo -> orderItemVo.getSkuId()).collect(Collectors.toList());
+            map.put("skuIds",JSON.toJSONString(skuIds));
+            amqpTemplate.convertAndSend("ORDER-EXCHANGE","cart.delete",map);
+        } catch (AmqpException e) {
+            e.printStackTrace();
+        }
 
     }
 }

@@ -18,7 +18,7 @@ spring:
     username: theking      #用户名
     password: 1217         #密码
 mybatis-plus:
-  mapper-locations: classpath:mapper/pms/*.xml  # 读取映射文件
+  mapper-locations: classpath:mapper/ums/*.xml  # 读取映射文件
   global-config:
     db-config:
       id-type: auto  # 默认使用数据库自增
