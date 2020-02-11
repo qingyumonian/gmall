@@ -9,13 +9,12 @@
         <module name="gmall-item" />
         <module name="gmall-oms" />
         <module name="gmall-order" />
-        <module name="elasticsearch-demo" />
+        <module name="gmall-cart" />
         <module name="gmall-sms" />
-        <module name="gmall-index" />
         <module name="gmall-ums" />
         <module name="gmall-wms" />
         <module name="gmall-pms-interface" />
-        <module name="gmall-oms-interface" />
+        <module name="gmall-index" />
         <module name="gmall-search" />
         <module name="gmall-wms-interface" />
         <module name="gmall-core" />
@@ -23,12 +22,13 @@
         <module name="gmall-send" />
         <module name="gmall-sms-interface" />
         <module name="gmall-admin" />
+        <module name="elasticsearch-demo" />
         <module name="gmall-generator" />
         <module name="gmall-ums-interface" />
-        <module name="gmall-cart" />
+        <module name="gmall-cart-interface" />
         <module name="gmall-pms" />
         <module name="gmall-auth" />
-        <module name="gmall-cart-interface" />
+        <module name="gmall-oms-interface" />
       </profile>
     </annotationProcessing>
   </component>

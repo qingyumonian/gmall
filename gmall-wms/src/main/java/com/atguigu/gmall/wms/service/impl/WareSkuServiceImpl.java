@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.wms.vo.SkuLockVo;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,10 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
+
 
     private static final String KEY_PREFIX="wms:stock:";
     @Override
@@ -71,6 +76,11 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         }
         String orderToken = skuLockVos.get(0).getOrderToken();
         redisTemplate.opsForValue().set(KEY_PREFIX+orderToken, JSON.toJSONString(skuLockVos));
+
+
+       //定时释放库存
+        amqpTemplate.convertAndSend("ORDER-EXCHANGE","wms.ttl",orderToken);
+
         return null;
     }
 

@@ -29,7 +29,7 @@ public class StockListener {
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "STOCK-UNLOCK-QUEUE",durable = "true"),
             exchange = @Exchange(value = "ORDER-EXCHANGE",ignoreDeclarationExceptions = "true",type = ExchangeTypes.TOPIC),
-            key = {"stock.unlock"}
+            key = {"stock.unlock","wms.dead"}
     ))
     public void unlock(String orderToken){
 
@@ -44,6 +44,8 @@ public class StockListener {
       skuLockVos.forEach(skuLockVo -> {
           wareSkuDao.unLock(skuLockVo.getWareSkuId(),skuLockVo.getCount());
       });
-      //redisTemplater.delete(KEY_PREFIX+orderToken);
+
+      //防止重复解锁库存
+      redisTemplater.delete(KEY_PREFIX+orderToken);
     }
 }

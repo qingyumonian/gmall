@@ -13,6 +13,12 @@ spring:
     password: Theking1217.
   redis:
     host: 192.168.232.128
+  rabbitmq:
+    host: 192.168.232.128
+    port: 5672
+    virtual-host: /theking
+    username: theking
+    password: 1217
 mybatis-plus:
   mapper-locations: classpath:mapper/oms/*.xml  # 读取映射文件
   global-config:

@@ -11,6 +11,7 @@ import com.atguigu.gmall.oms.vo.OrderSubmitVo;
 import com.atguigu.gmall.pms.entity.SkuInfoEntity;
 import com.atguigu.gmall.pms.entity.SpuInfoEntity;
 import com.atguigu.gmall.ums.entity.MemberReceiveAddressEntity;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -38,6 +39,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Autowired
     private GmallPmsClient pmsClient;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -112,6 +116,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             }
         }
 
+        amqpTemplate.convertAndSend("ORDER-EXCHANGE", "order.ttl", orderSubmitVo.getOrderToken());
         return orderEntity;
     }
 

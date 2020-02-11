@@ -172,7 +172,7 @@ public class OrderService {
         return  orderConfirmVo;
     }
 
-    public void submit(OrderSubmitVo orderSubmitVo) {
+    public OrderEntity submit(OrderSubmitVo orderSubmitVo) {
 
             //1.校验是否重复提交
            //判断redis中有没有，有没有提交，没有已经提交
@@ -221,10 +221,11 @@ public class OrderService {
         //异常：后续订单无法创建，定时释放库存
 
         //4.新增订单，订单状态为未支付
+        OrderEntity orderEntity=null;
         try {
             UserInfo userInfo = LoginInterceptor.getUserInfo();
             Resp<OrderEntity> orderEntityResp = omsClient.saveOrder(orderSubmitVo,userInfo.getUserId());
-            OrderEntity orderEntity = orderEntityResp.getData();
+            orderEntity = orderEntityResp.getData();
         } catch (Exception e) {
             //释放库存，消息队列（异步）
             amqpTemplate.convertAndSend("ORDER-EXCHANGE","stock.unlock",orderSubmitVo.getOrderToken());
@@ -242,6 +243,8 @@ public class OrderService {
         } catch (AmqpException e) {
             e.printStackTrace();
         }
+
+        return orderEntity;
 
     }
 }
