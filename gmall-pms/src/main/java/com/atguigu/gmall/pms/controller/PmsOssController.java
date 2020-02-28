@@ -22,8 +22,8 @@ public class PmsOssController {
 
     @GetMapping("/policy")
     public Resp<Object> Policy() {
-        String accessId = "LTAI4FogF6BPvG8ssNLN3QMH"; // 请填写您的AccessKeyId。
-        String accessKey = "pOdsNQQipf4eHubmk2hKuC3UvW7A35"; // 请填写您的AccessKeySecret。
+        String accessId = "8888"; // 请填写您的AccessKeyId。
+        String accessKey = "8888"; // 请填写您的AccessKeySecret。
         String endpoint = "oss-cn-beijing.aliyuncs.com"; // 请填写您的 endpoint。
         String bucket = "gmall-theking"; // 请填写您的 bucketname 。
         String host = "https://" + bucket + "." + endpoint; // host的格式为 bucketname.endpoint

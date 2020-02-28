@@ -1,0 +1,4 @@
+com\thekingqj\config\ElasticSearchConfig.class
+com\thekingqj\pojo\User.class
+com\thekingqj\ESDemoAllpication.class
+com\thekingqj\repository\UserRespository.class

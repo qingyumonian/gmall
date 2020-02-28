@@ -1,0 +1,10 @@
+com\atguigu\gmall\ums\entity\MemberEntity.class
+com\atguigu\gmall\ums\entity\IntegrationChangeHistoryEntity.class
+com\atguigu\gmall\ums\entity\MemberLevelEntity.class
+com\atguigu\gmall\ums\entity\MemberReceiveAddressEntity.class
+com\atguigu\gmall\ums\entity\MemberStatisticsInfoEntity.class
+com\atguigu\gmall\ums\entity\MemberLoginLogEntity.class
+com\atguigu\gmall\ums\api\GmallUmsApi.class
+com\atguigu\gmall\ums\entity\GrowthChangeHistoryEntity.class
+com\atguigu\gmall\ums\entity\MemberCollectSubjectEntity.class
+com\atguigu\gmall\ums\entity\MemberCollectSpuEntity.class

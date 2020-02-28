@@ -218,7 +218,7 @@ public class OrderService {
         if (!CollectionUtils.isEmpty(skuLockVoList)) {
            throw new OrderException(JSON.toJSONString(skuLockVoList));
         }
-        //异常：后续订单无法创建，定时释放库存
+        //异常：后续订单无法创建，定时释放库存  PS:当验库锁库成功后，若发生问题，那么在锁库的为服务中会有超时机制，超过指定时间就会解锁库存。
 
         //4.新增订单，订单状态为未支付
         OrderEntity orderEntity=null;

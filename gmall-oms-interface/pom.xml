@@ -45,11 +45,7 @@
             <artifactId>gmall-ums-interface</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.atguigu</groupId>
-            <artifactId>gmall-oms-interface</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+
         <dependency>
             <groupId>com.atguigu</groupId>
             <artifactId>gmall-pms-interface</artifactId>
