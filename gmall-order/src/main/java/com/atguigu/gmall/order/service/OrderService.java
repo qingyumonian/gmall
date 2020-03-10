@@ -73,10 +73,15 @@ public class OrderService {
 
     private static final String TOKEN_PREFIX="order:token:";
 
+
+
+    //确认订单
     public OrderConfirmVo confirm() {
 
         OrderConfirmVo orderConfirmVo = new OrderConfirmVo();
+
         UserInfo userInfo = LoginInterceptor.getUserInfo();
+
         //获取用户的地址信息，远程接口
         CompletableFuture<Void> addressFuture = CompletableFuture.runAsync(() -> {
             Resp<List<MemberReceiveAddressEntity>> memberResp = umsClient.queryAddressesByUserId(userInfo.getUserId());

@@ -43,15 +43,15 @@ import java.util.stream.Collectors;
 public class SearchService {
 
     @Autowired
-    private RestHighLevelClient highLevelClient;
+    private RestHighLevelClient highLevelClient;     //es的客户端
 
     public SearchResponseVo search(SearchParam searchParam) throws IOException {
 
 
         SearchResponse search = highLevelClient.search(new SearchRequest(new String[]{"goods"}, buildDSL(searchParam)), RequestOptions.DEFAULT);
-        System.out.println(search.toString());
+        System.out.println(search.toString());//输出结果集
 
-        SearchResponseVo responseVo = parseSearchResult(search);
+        SearchResponseVo responseVo = parseSearchResult(search);  //接收根据结果集，封装数据
         //设置分页参数
         responseVo.setPageNum(searchParam.getPageNum());
         responseVo.setPageSize(searchParam.getPageSize());
@@ -61,6 +61,7 @@ public class SearchService {
     //数据的解析封装
     private SearchResponseVo parseSearchResult( SearchResponse search){
         SearchResponseVo responseVo = new SearchResponseVo();
+
         //查询结果集的封装
         SearchHits hits = search.getHits();
         SearchHit[] hitsHits = hits.getHits();
@@ -253,7 +254,7 @@ public class SearchService {
                 .subAggregation(AggregationBuilders.terms("attrIdAgg").field("attrs.attrId")
                         .subAggregation(AggregationBuilders.terms("attrNameAgg").field("attrs.attrName"))
                         .subAggregation(AggregationBuilders.terms("attrValueAgg").field("attrs.attrValue"))));
-        System.out.println(sourceBuilder.toString());
+        System.out.println(sourceBuilder.toString());  //输出查询的语句集
         return sourceBuilder;
     }
 
