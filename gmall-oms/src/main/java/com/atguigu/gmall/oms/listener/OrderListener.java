@@ -14,6 +14,7 @@ public class OrderListener {
 
     @Autowired
     private AmqpTemplate amqpTemplate;
+
     @RabbitListener(queues = {"ORDER-DEAD-QUEUE"})
     public void closeOrder(String orderToken){
 

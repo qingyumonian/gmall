@@ -221,7 +221,7 @@ public class OrderService {
         Resp<List<SkuLockVo>> skuLockResp = wmsClient.checkAndLock(skuLockVos);
         List<SkuLockVo> skuLockVoList = skuLockResp.getData();
         if (!CollectionUtils.isEmpty(skuLockVoList)) {
-           throw new OrderException(JSON.toJSONString(skuLockVoList));
+           throw new OrderException("库存不足，请重新查看对应商品库存是否满足您的需求"+JSON.toJSONString(skuLockVoList));
         }
         //异常：后续订单无法创建，定时释放库存  PS:当验库锁库成功后，若发生问题，那么在锁库的为服务中会有超时机制，超过指定时间就会解锁库存。
 

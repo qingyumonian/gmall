@@ -75,6 +75,8 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             return skuLockVos;
         }
         String orderToken = skuLockVos.get(0).getOrderToken();
+
+        //锁库存成功后，将锁库的数据存入redis中，用于订单失败，做数据的回滚
         redisTemplate.opsForValue().set(KEY_PREFIX+orderToken, JSON.toJSONString(skuLockVos));
 
 
@@ -105,8 +107,5 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         }
         fairLock.unlock();
     }
-
-
-
 
 }
